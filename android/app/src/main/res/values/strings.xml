@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CleanLoop</string>
+    <string name="facebook_app_id">9203861596343077</string>
+    <string name="fb_login_protocol_scheme">fb9203861596343077</string>
+    <string name="facebook_client_token">07c232a09bb925bb286ec1bbb37f366c</string>
+</resources>
