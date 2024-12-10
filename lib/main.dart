@@ -1,13 +1,12 @@
-import 'package:cleanloop/pages/LoginPage.dart';
-import 'package:cleanloop/pages/RecyclingGuide.dart';
-import 'package:cleanloop/pages/UserProfile/EditProfilePage.dart';
-import 'package:cleanloop/pages/UserProfile/HelpSupportPage.dart';
 import 'package:cleanloop/pages/UserProfile/ThemeManager.dart';
-import 'package:cleanloop/pages/homePage.dart';
-import 'package:cleanloop/pages/UserProfile/userProfile.dart';
+import 'package:cleanloop/pages/tracking_location/location_confirmation.dart';
+import 'package:cleanloop/pages/tracking_location/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+
+import 'homePage.dart';
+
 
 
 void main() async {
@@ -36,7 +35,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: themeManager.themeMode,
-      home:  Loginpage(),
+      home:   WasteCleaningHomePage(),
     );
   }
 }

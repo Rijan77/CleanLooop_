@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HelpSupportPage extends StatelessWidget {
-  const HelpSupportPage({Key? key}) : super(key: key);
+  const HelpSupportPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +41,12 @@ class HelpSupportPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              ExpansionTile(
-                title: const Text(
+              const ExpansionTile(
+                title: Text(
                   "How does CleanLoop work?",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                children: const [
+                children: [
                   Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
@@ -56,12 +56,12 @@ class HelpSupportPage extends StatelessWidget {
                   ),
                 ],
               ),
-              ExpansionTile(
-                title: const Text(
+              const ExpansionTile(
+                title: Text(
                   "How can I track my waste?",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                children: const [
+                children: [
                   Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
@@ -71,12 +71,12 @@ class HelpSupportPage extends StatelessWidget {
                   ),
                 ],
               ),
-              ExpansionTile(
-                title: const Text(
+              const ExpansionTile(
+                title: Text(
                   "How do I report issues?",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                children: const [
+                children: [
                   Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(

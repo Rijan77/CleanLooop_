@@ -103,6 +103,7 @@ class _LocationConfirmationPageState extends State<LocationConfirmationPage> {
                 setState(() {
                   _isLocationConfirmed = true;
                 });
+
                 // Add any further logic for confirmation
                 // For example, navigate to the next screen or save the location
               }

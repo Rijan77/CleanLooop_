@@ -1,5 +1,5 @@
 import 'package:cleanloop/pages/UserProfile/ImagePick.dart';
-import 'package:cleanloop/pages/LoginPage.dart';
+import 'package:cleanloop/pages/user_auth/LoginPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ import 'dart:typed_data';
 import '../CustomDialog.dart';
 import 'EditProfilePage.dart';
 import 'HelpSupportPage.dart';
-import '../auth_service.dart';
+import '../user_auth/auth_service.dart';
 import 'SettingsPage.dart';
 
 class Userprofile extends StatefulWidget {
@@ -66,7 +66,7 @@ class _UserprofileState extends State<Userprofile> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 170, left: 220),
-                child: IconButton(onPressed: selectImage, icon: Icon(Icons.add_a_photo)),
+                child: IconButton(onPressed: selectImage, icon: const Icon(Icons.add_a_photo)),
               ),
             ],
           ),
@@ -81,16 +81,16 @@ class _UserprofileState extends State<Userprofile> {
                   snapshot.data!.docs.isNotEmpty) {
                 return Text(
                   snapshot.data!.docs[0]["name"],
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20
                   ),
                 );
               }
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
 
@@ -118,15 +118,15 @@ class _UserprofileState extends State<Userprofile> {
                   title: "Edit Profile",
                   subtitle: "Edit your own profile.",
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfilePage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const EditProfilePage()));
                   },
                 ),
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
 
                 _buildProfileOption(context, icon: Icons.history, title: "My History", subtitle: "Track your past activities", onTap: (){
 
                 }),
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
 
                 _buildProfileOption(
                   context,
@@ -134,12 +134,12 @@ class _UserprofileState extends State<Userprofile> {
                   title: "Settings",
                   subtitle: "Adjust your preferences.",
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> SettingsPage())
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=> const SettingsPage())
 
                     );
                   },
                 ),
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
 
                 _buildProfileOption(
                   context,
@@ -148,12 +148,12 @@ class _UserprofileState extends State<Userprofile> {
                   subtitle: "Get assistance for any issues.",
                   onTap: () {
                     // Navigate to Help & Support Page (Placeholder)
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>HelpSupportPage())
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const HelpSupportPage())
                     );
                   },
                 ),
 
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
                 _buildProfileOption(
                   context,
                   icon: Icons.logout,

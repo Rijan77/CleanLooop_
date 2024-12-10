@@ -40,10 +40,15 @@ dependencies:
   cloud_firestore:
   firebase_database:
   provider:
+  table_calendar:
   google_sign_in:
-  flutter_facebook_auth:
+  flutter_facebook_auth: ^6.1.2
   google_maps_flutter:
   geocoding:
+  intl:
+  fl_chart:
+  flutter_local_notifications:
+  flutter_polyline_points:
   location:
   firebase_crashlytics:
   image_picker:
