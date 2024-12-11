@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'event.dart'; // Import the Event class
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'event.dart';
 
 class CommunityEventsPage extends StatefulWidget {
   const CommunityEventsPage({super.key});
@@ -11,122 +13,356 @@ class CommunityEventsPage extends StatefulWidget {
 }
 
 class _CommunityEventsPageState extends State<CommunityEventsPage> {
-  // Calendar state
-  DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
+  late DateTime _focusedDay;
+  late DateTime _selectedDay;
+  bool _isLoading = true;
+  List<Event> _events = [];
 
-  // Hardcoded event data with unique IDs
-  List<Event> events = [
-    Event(
-      id: "treePlantationDrive",
-      title: "Tree Plantation Drive",
-      date: DateTime(2024, 12, 16),
-      time: "11:00 AM",
-      location: "City Square",
-    ),
-    Event(
-      id: "ecoWalkathon",
-      title: "Eco-Walkathon",
-      date: DateTime(2024, 12, 20),
-      time: "6:00 AM",
-      location: "River Park",
-    ),
-    Event(
-      id: "wasteManagementWorkshop",
-      title: "Waste Management Workshop",
-      date: DateTime(2024, 12, 28),
-      time: "2:00 PM",
-      location: "Community Center",
-    ),
-    Event(
-      id: "sustainabilityFair",
-      title: "Sustainability Fair",
-      date: DateTime(2025, 1, 5),
-      time: "10:00 AM",
-      location: "Town Hall",
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _focusedDay = DateTime.now();
+    _selectedDay = DateTime.now();
+    _loadEvents();
+  }
 
-  // Get events for a specific day
+  Future<void> _loadEvents() async {
+    setState(() => _isLoading = true);
+    try {
+      // Example events - replace with your actual events or load from Firebase
+      _events = [
+        Event(
+          id: "treePlantationDrive",
+          title: "Tree Plantation Drive",
+          date: DateTime(2024, 12, 16),
+          time: "11:00 AM",
+          location: "City Square",
+          description: "Join us for a community tree planting event!",
+        ),
+        Event(
+          id: "ecoWalkathon",
+          title: "Eco-Walkathon",
+          date: DateTime(2024, 12, 20),
+          time: "6:00 AM",
+          location: "River Park",
+          description: "Walk for a greener future.",
+        ),
+        Event(
+          id: "wasteManagementWorkshop",
+          title: "Waste Management Workshop",
+          date: DateTime(2024, 12, 28),
+          time: "2:00 PM",
+          location: "Community Center",
+          description: "Learn about effective waste management practices.",
+        ),
+        Event(
+          id: "sustainabilityFair",
+          title: "Sustainability Fair",
+          date: DateTime(2025, 1, 5),
+          time: "10:00 AM",
+          location: "Town Hall",
+          description: "Explore sustainable living solutions.",
+        ),
+      ];
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading events: $e')),
+        );
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
   List<Event> _getEventsForDay(DateTime day) {
-    return events.where((event) {
-      return event.date.year == day.year &&
-          event.date.month == day.month &&
-          event.date.day == day.day;
+    return _events.where((event) {
+      return isSameDay(event.date, day);
     }).toList();
+  }
+
+  // Helper method for phone number validation
+  bool _isValidPhoneNumber(String phoneNumber) {
+    // Basic phone number validation
+    // Modify regex as per your country's phone number format
+    final phoneRegex = RegExp(r'^\+?[0-9]{10,14}$');
+    return phoneRegex.hasMatch(phoneNumber.replaceAll(RegExp(r'\s'), ''));
+  }
+
+  Future<void> _handleParticipation(Event event) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null || user.email == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please login to participate')),
+      );
+      return;
+    }
+
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    TextEditingController nameController = TextEditingController();
+    TextEditingController addressController = TextEditingController();
+    TextEditingController emailController = TextEditingController(text: user.email);
+    TextEditingController contactController = TextEditingController();
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Participate in ${event.title}'),
+          content: Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Full Name *',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Name is required';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: addressController,
+                    decoration: const InputDecoration(
+                      labelText: 'Address',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: emailController,
+                    enabled: false,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: contactController,
+                    decoration: const InputDecoration(
+                      labelText: 'Contact Number *',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.phone,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Contact number is required';
+                      }
+                      if (!_isValidPhoneNumber(value)) {
+                        return 'Invalid phone number format';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    '* Required fields',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  Navigator.pop(context, true);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF34D399),
+              ),
+              child: const Text('Join'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result == true) {
+      try {
+        // Start a batch write
+        final batch = FirebaseFirestore.instance.batch();
+
+        // Add participation record
+        final participationRef = FirebaseFirestore.instance
+            .collection('events')
+            .doc(event.id)
+            .collection('participants')
+            .doc();
+
+        batch.set(participationRef, {
+          'userName': nameController.text.trim(),
+          'userAddress': addressController.text.trim(),
+          'userEmail': user.email,
+          'userContact': contactController.text.trim(),
+          'participationDate': DateTime.now(),
+        });
+
+        // Update user points
+        final userRef = FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.email);
+
+        batch.set(userRef, {
+          'points': FieldValue.increment(20),
+          'participatedEvents': FieldValue.arrayUnion([event.id]),
+        }, SetOptions(merge: true));
+
+        // Commit the batch
+        await batch.commit();
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Successfully registered for ${event.title}! You earned 20 points!'
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Community Events'),
-        backgroundColor: Colors.green[700],
+        backgroundColor: const Color(0xFF34D399),
       ),
       body: Column(
         children: [
           // Calendar Widget
-          TableCalendar(
-            focusedDay: _focusedDay,
-            firstDay: DateTime.utc(2020, 01, 01),
-            lastDay: DateTime.utc(2025, 12, 31),
-            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-            },
-            calendarStyle: CalendarStyle(
-              todayDecoration: BoxDecoration(
-                color: Colors.green[400],
-                shape: BoxShape.circle,
+          Card(
+            margin: const EdgeInsets.all(8.0),
+            elevation: 4,
+            child: TableCalendar(
+              firstDay: DateTime.now().subtract(const Duration(days: 365)),
+              lastDay: DateTime.now().add(const Duration(days: 365)),
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              eventLoader: _getEventsForDay,
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+              },
+              calendarStyle: const CalendarStyle(
+                markerDecoration: BoxDecoration(
+                  color: Color(0xFF34D399),
+                  shape: BoxShape.circle,
+                ),
               ),
-              selectedDecoration: BoxDecoration(
-                color: Colors.blue[700],
-                shape: BoxShape.circle,
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
               ),
-              weekendTextStyle: TextStyle(color: Colors.green[900]),
-              defaultTextStyle: TextStyle(color: Colors.green[800]),
-              outsideTextStyle: TextStyle(color: Colors.green[300]),
             ),
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-              titleTextStyle: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.green[800],
-              ),
-              leftChevronIcon: Icon(Icons.chevron_left, color: Colors.green[800]),
-              rightChevronIcon: Icon(Icons.chevron_right, color: Colors.green[800]),
-            ),
-            eventLoader: _getEventsForDay,
           ),
 
-          // Event List
+          // Events List
           Expanded(
-            child: ListView.builder(
+            child: _getEventsForDay(_selectedDay).isEmpty
+                ? Center(
+              child: Text(
+                'No events on this day',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 16,
+                ),
+              ),
+            )
+                : ListView.builder(
+              padding: const EdgeInsets.all(8.0),
               itemCount: _getEventsForDay(_selectedDay).length,
               itemBuilder: (context, index) {
                 final event = _getEventsForDay(_selectedDay)[index];
                 return Card(
-                  color: Colors.blue[50],
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
                   child: ListTile(
+                    contentPadding: const EdgeInsets.all(16),
                     title: Text(
                       event.title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.red[900],
+                        fontSize: 18,
                       ),
                     ),
-                    subtitle: Text(
-                      '${event.time} | ${event.location}',
-                      style: TextStyle(color: Colors.green[800]),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.access_time, size: 16),
+                            const SizedBox(width: 8),
+                            Text(event.time),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on, size: 16),
+                            const SizedBox(width: 8),
+                            Text(event.location),
+                          ],
+                        ),
+                        if (event.description != null && event.description!.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(event.description!),
+                        ],
+                      ],
                     ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.add, color: Colors.green[700]),
-                      onPressed: () => _showParticipationDialog(context, event),
+                    trailing: ElevatedButton(
+                      onPressed: () => _handleParticipation(event),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF34D399),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                      ),
+                      child: const Text('Join'),
                     ),
                   ),
                 );
@@ -135,81 +371,6 @@ class _CommunityEventsPageState extends State<CommunityEventsPage> {
           ),
         ],
       ),
-    );
-  }
-
-  // Show dialog to participate in an event
-  void _showParticipationDialog(BuildContext context, Event event) {
-    TextEditingController nameController = TextEditingController();
-    TextEditingController addressController = TextEditingController();
-    TextEditingController emailController = TextEditingController();
-    TextEditingController contactController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Participate in ${event.title}'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Full Name'),
-                ),
-                TextField(
-                  controller: addressController,
-                  decoration: const InputDecoration(labelText: 'Address'),
-                ),
-                TextField(
-                  controller: emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                ),
-                TextField(
-                  controller: contactController,
-                  decoration: const InputDecoration(labelText: 'Contact Number'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                String userName = nameController.text.trim();
-                String userAddress = addressController.text.trim();
-                String userEmail = emailController.text.trim();
-                String userContact = contactController.text.trim();
-
-                if (userName.isNotEmpty && userEmail.isNotEmpty && userContact.isNotEmpty) {
-                  // Save participant under the selected event
-                  await FirebaseFirestore.instance
-                      .collection('events')
-                      .doc(event.id)
-                      .collection('participants')
-                      .add({
-                    'userName': userName,
-                    'userAddress': userAddress,
-                    'userEmail': userEmail,
-                    'userContact': userContact,
-                  });
-
-                  Navigator.of(context).pop(); // Close the dialog
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('$userName, you have successfully registered for ${event.title}!'),
-                  ));
-                } else {
-                  // Show error if fields are empty
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Please fill in all required fields!'),
-                  ));
-                }
-              },
-              child: const Text('Join'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

@@ -4,6 +4,7 @@ class Event {
   final DateTime date;
   final String time;
   final String location;
+  final String? description;
 
   Event({
     required this.id,
@@ -11,5 +12,6 @@ class Event {
     required this.date,
     required this.time,
     required this.location,
+    this.description,
   });
 }

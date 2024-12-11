@@ -20,8 +20,15 @@ class _SchedulePickupPageState extends State<SchedulePickupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black, size: 33,),
+          onPressed: () {
+            // Navigate back to login page
+            Navigator.pop(context);
+          },
+        ),
         title: const Text('Schedule Pickup'),
-        backgroundColor: Colors.green,
+        backgroundColor: Color(0xff34D399),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -190,10 +197,27 @@ class _SchedulePickupPageState extends State<SchedulePickupPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.green.shade500,
+                    foregroundColor: Colors.black87,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(9), // Makes the button rectangular
+                    ),
+
                   ),
-                  child: const Text('Confirm Pickup'),
+                  child: const Text('Confirm Pickup', style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "calistoga",
+                    letterSpacing: 2,
+                  ),),
+                ),
+              ),
+              const SizedBox(height: 30),
+              const Divider(thickness: 1),
+              const Center(
+                child: Text(
+                  "© 2024 CleanLoop. All rights reserved.",
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ),
             ],

@@ -52,6 +52,8 @@ dependencies:
   location:
   firebase_crashlytics:
   image_picker:
+  url_launcher:
+  rxdart:
 
 dev_dependencies:
   flutter_test:

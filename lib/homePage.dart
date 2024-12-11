@@ -6,10 +6,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'Reward.dart';
 import 'pages/Events/communityEvents.dart';
 import 'pages/UserProfile/RecyclingGuide.dart';
 import 'pages/UserProfile/userProfile.dart';
 import 'pages/eco_features/greenMarket.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WasteCleaningHomePage extends StatefulWidget {
   const WasteCleaningHomePage({super.key});
@@ -29,7 +31,7 @@ class _WasteCleaningHomePageState extends State<WasteCleaningHomePage> {
     _screens.addAll([
       const HomeScreen(),
       const NotificationPage(),
-      const HistoryPage(userId: '',),
+      HistoryPage(),
       const Userprofile(),
 
     ]);
@@ -163,49 +165,163 @@ class HomeScreen extends StatelessWidget {
           ),
 
           // Ad Container (Immediately After Search Bar)
+          // Ad Container (Immediately After Search Bar)
+          // Ad Container (Immediately After Search Bar)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.lightGreen[100],
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.green, width: 2),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '🌱 Plant a tree today!',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Featured Organizations',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Join our green initiative and earn rewards while contributing to a healthier planet.',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // Handle start now action
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 180, // Fixed height to prevent overflow
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 3,
+                    itemBuilder: (context, index) {
+                      final ngoAds = [
+                        {
+                          'title': 'WWF Conservation',
+                          'description': 'Join our mission to protect wildlife and reduce plastic waste in oceans.',
+                          'action': 'Support Now',
+                          'icon': Icons.pets,
+                          'orgType': 'INGO',
+                          'url': 'https://www.wwfnepal.org/'
+                        },
+                        {
+                          'title': 'Green Earth Nepal',
+                          'description': 'Local initiative for tree plantation and waste management awareness.',
+                          'action': 'Join Campaign',
+                          'icon': Icons.forest,
+                          'orgType': 'NGO',
+                          'url': 'https://cleanupnepal.org.np/'
+                        },
+                        {
+                          'title': 'Clean City Initiative',
+                          'description': 'Community-driven program for sustainable urban waste management.',
+                          'action': 'Volunteer',
+                          'icon': Icons.cleaning_services,
+                          'orgType': 'NGO',
+                          'url': 'https://cleanupnepal.org.np/waste-management/'
+                        },
+                      ];
+
+                      final ad = ngoAds[index];
+
+                      return Container(
+                        margin: const EdgeInsets.only(right: 16.0),
+                        width: 280, // Fixed width
+                        child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: Colors.green.shade200,
+                              width: 1,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(ad['icon'] as IconData,
+                                        size: 24,
+                                        color: Colors.green),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            ad['title'] as String,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Text(
+                                            ad['orgType'] as String,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Expanded(
+                                  child: Text(
+                                    ad['description'] as String,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black87,
+                                    ),
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      final url = Uri.parse(ad['url'] as String);
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url);
+                                      } else {
+                                        // Show error message if URL cannot be launched
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Could not launch website'),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      ad['action'] as String,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    label: const Text('Start Now'),
-                    icon: const Icon(Icons.arrow_forward),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
+
 
           // Categories Section
           Padding(
@@ -277,6 +393,9 @@ class HomeScreen extends StatelessWidget {
           }
           if (title == "Recycling Guide"){
             Navigator.push(context, MaterialPageRoute(builder: (context)=>const Recyclingguide()));
+          }
+          if(title == "Rewards & Points"){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>RewardPage()));
           }
 
 

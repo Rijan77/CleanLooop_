@@ -1,8 +1,10 @@
 import 'package:cleanloop/pages/UserProfile/ThemeManager.dart';
+import 'package:cleanloop/pages/user_auth/SplasScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
+import 'Reward.dart';
 import 'homePage.dart';
 
 
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: themeManager.themeMode,
-      home:   const WasteCleaningHomePage  (),
+      home:    Splashscreen  (),
     );
   }
 }

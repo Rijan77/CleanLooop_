@@ -4,6 +4,8 @@ import 'package:cleanloop/pages/UserProfile/userProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../homePage.dart';
+
 class Wrapper extends StatefulWidget {
   const Wrapper({super.key});
 
@@ -26,7 +28,7 @@ class _WrapperState extends State<Wrapper> {
           if(snapshot.data == null){
             return const Onboardingpage();
           } else{
-            return const Userprofile();
+            return  WasteCleaningHomePage();
           }
         }
 

@@ -114,7 +114,7 @@ class _UserprofileState extends State<Userprofile> {
 
                 _buildProfileOption(context, icon: Icons.history, title: "My History", subtitle: "Track your past activities",
                     onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const HistoryPage(userId: ' ',)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> HistoryPage()));
 
                 }),
                 const SizedBox(height: 5,),
