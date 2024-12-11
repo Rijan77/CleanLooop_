@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'Feedback.dart';
+
 class HelpSupportPage extends StatelessWidget {
   const HelpSupportPage({super.key});
 
@@ -140,7 +142,7 @@ class HelpSupportPage extends StatelessWidget {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigate to feedback form or handle feedback submission
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const FeedbackPage()));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green.shade500,

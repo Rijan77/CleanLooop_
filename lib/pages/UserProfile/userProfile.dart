@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 
 import '../CustomDialog.dart';
+import '../eco_features/historyPage.dart';
 import 'EditProfilePage.dart';
 import 'HelpSupportPage.dart';
 import '../user_auth/auth_service.dart';
@@ -94,18 +95,6 @@ class _UserprofileState extends State<Userprofile> {
             height: 8,
           ),
 
-          // ElevatedButton(
-          //   onPressed: () {
-          //     // Edit profile action
-          //   },
-          //   style: ElevatedButton.styleFrom(
-          //     backgroundColor: Colors.white,
-          //     foregroundColor: Colors.green,
-          //   ),
-          //   child: const Text('Edit Profile'),
-          // ),
-
-
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -123,7 +112,9 @@ class _UserprofileState extends State<Userprofile> {
                 ),
                 const SizedBox(height: 5,),
 
-                _buildProfileOption(context, icon: Icons.history, title: "My History", subtitle: "Track your past activities", onTap: (){
+                _buildProfileOption(context, icon: Icons.history, title: "My History", subtitle: "Track your past activities",
+                    onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const HistoryPage(userId: ' ',)));
 
                 }),
                 const SizedBox(height: 5,),
@@ -160,7 +151,6 @@ class _UserprofileState extends State<Userprofile> {
                   title: "Logout!",
                   subtitle: "Sign out of your account.",
                   onTap: ()async{
-
                     CustomDialog.showSuccessDialog(
                       context: context,
                       title: "Logout!",

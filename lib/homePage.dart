@@ -29,7 +29,7 @@ class _WasteCleaningHomePageState extends State<WasteCleaningHomePage> {
     _screens.addAll([
       const HomeScreen(),
       const NotificationPage(),
-      HistoryPage(userId: '',),
+      const HistoryPage(userId: '',),
       const Userprofile(),
 
     ]);
@@ -84,8 +84,8 @@ class HomeScreen extends StatelessWidget {
         children: [
           // Green Container (Profile Section at the Top)
           Container(
-            color: Colors.green,
-            padding: const EdgeInsets.all(16.0),
+            color: const Color(0xff34D399),
+            padding: const EdgeInsets.all(17.0),
             child: Column(
               children: [
                 // Profile and Points Row

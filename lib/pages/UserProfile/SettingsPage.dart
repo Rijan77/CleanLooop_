@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../CustomDialog.dart';
+import '../user_auth/LoginPage.dart';
 import 'ThemeManager.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -50,6 +52,13 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black, size: 33,),
+          onPressed: () {
+            // Navigate back to login page
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: const Color(0xff34D399),
         title: const Text(
           "Settings",
@@ -98,12 +107,29 @@ class _SettingsPageState extends State<SettingsPage> {
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: const Text("Logout"),
-            onTap: () {
+            onTap: ()async{
               // Handle logout logic here
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Logged out successfully!")),
+              CustomDialog.showSuccessDialog(
+                context: context,
+                title: "Logout!",
+                message: "We hate to see you go! Sure you want to log out?",
+                onConfirm: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Loginpage()),
+                  );
+                },
               );
             },
+          ),
+          const SizedBox(height: 14),
+          const Divider(thickness: 1),
+          const SizedBox(height: 394),
+          const Center(
+            child: Text(
+              "© 2024 CleanLoop. All rights reserved.",
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
           ),
         ],
       ),

@@ -10,8 +10,16 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Activity'),
-        backgroundColor: Colors.green,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black, size: 33,),
+          onPressed: () {
+            // Navigate back to login page
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text('Your Activity', style: TextStyle( fontFamily: "Calistoga",
+          fontSize: 21,),),
+        backgroundColor: const Color(0xff34D399),
       ),
       body: StreamBuilder<QuerySnapshot>(
         // Stream without filters for testing

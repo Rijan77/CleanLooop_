@@ -96,12 +96,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         backgroundColor: const Color(0xff34D399),
         leading: IconButton(
           icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-            size: 26,
+            Icons.arrow_back, color: Colors.black, size: 33,
           ),
           onPressed: () => Navigator.pop(context),
         ),

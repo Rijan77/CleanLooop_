@@ -1,6 +1,4 @@
 import 'package:cleanloop/pages/UserProfile/ThemeManager.dart';
-import 'package:cleanloop/pages/tracking_location/location_confirmation.dart';
-import 'package:cleanloop/pages/tracking_location/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +33,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: themeManager.themeMode,
-      home:   WasteCleaningHomePage(),
+      home:   const WasteCleaningHomePage  (),
     );
   }
 }
