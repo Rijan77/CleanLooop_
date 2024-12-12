@@ -273,7 +273,7 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Truck Tracker', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green,
+        backgroundColor: Color(0xff34D399),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
