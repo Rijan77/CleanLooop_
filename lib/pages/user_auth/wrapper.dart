@@ -1,6 +1,5 @@
 
 import 'package:cleanloop/pages/user_auth/OnboardingPage.dart';
-import 'package:cleanloop/pages/UserProfile/userProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -28,7 +27,7 @@ class _WrapperState extends State<Wrapper> {
           if(snapshot.data == null){
             return const Onboardingpage();
           } else{
-            return  WasteCleaningHomePage();
+            return  const WasteCleaningHomePage();
           }
         }
 

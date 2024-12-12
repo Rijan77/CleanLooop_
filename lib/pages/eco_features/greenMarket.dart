@@ -1,9 +1,14 @@
+import 'package:esewa_flutter_sdk/esewa_config.dart';
+import 'package:esewa_flutter_sdk/esewa_flutter_sdk.dart';
+import 'package:esewa_flutter_sdk/esewa_payment.dart';
+import 'package:esewa_flutter_sdk/esewa_payment_success_result.dart';
 import 'package:flutter/material.dart';
 
 
 
 class GreenMarketPage extends StatelessWidget {
   const GreenMarketPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +59,36 @@ class _EcoFriendlyProductMarketplaceState
     'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=500',
 
   ];
+
+  esewapaymentcall(){
+    try {
+      EsewaFlutterSdk.initPayment(
+        esewaConfig: EsewaConfig(
+          environment: Environment.test,
+          clientId: StaticValue.CLIENT_ID,
+          secretId: StaticValue.SECRET_KEY,
+        ),
+        esewaPayment: EsewaPayment(
+          productId: "1d71jd81",
+          productName: "Product One",
+          productPrice: "20", callbackUrl: '',
+        ),
+        onPaymentSuccess: (EsewaPaymentSuccessResult data) {
+          debugPrint(":::SUCCESS::: => $data");
+          // verifyTransactionStatus(data);
+        },
+        onPaymentFailure: (data) {
+          debugPrint(":::FAILURE::: => $data");
+        },
+        onPaymentCancellation: (data) {
+          debugPrint(":::CANCELLATION::: => $data");
+        },
+      );
+    } on Exception catch (e) {
+      debugPrint("EXCEPTION : ${e.toString()}");
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,8 +191,7 @@ class _EcoFriendlyProductMarketplaceState
                 title: const Text('eSewa'),
                 leading: const Icon(Icons.payment),
                 onTap: () {
-                  Navigator.pop(context);
-                  _showPaymentSuccessDialog(context, 'eSewa');
+                  esewapaymentcall();
                 },
               ),
               ListTile(
@@ -194,6 +228,11 @@ class _EcoFriendlyProductMarketplaceState
       },
     );
   }
+}
+
+class StaticValue {
+  static var CLIENT_ID = "JB0BBQ4aD0UqIThFJwAKBgAXEUkEGQUBBAwdOgABHD4DChwUAB0R";
+  static var SECRET_KEY = "BhwIWQQADhIYSxILExMcAgFXFhcOBwAKBgAXEQ==";
 }
 
 class SustainableAlternatives extends StatelessWidget {

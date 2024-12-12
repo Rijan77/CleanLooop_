@@ -137,14 +137,6 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Text(
-                      'Points: 120',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -395,7 +387,7 @@ class HomeScreen extends StatelessWidget {
             Navigator.push(context, MaterialPageRoute(builder: (context)=>const Recyclingguide()));
           }
           if(title == "Rewards & Points"){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>RewardPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const RewardPage()));
           }
 
 

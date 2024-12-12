@@ -22,7 +22,7 @@ class _MapPageState extends State<MapPage> {
   LatLng? _truckPosition;
 
   Timer? _truckMovementTimer;
-  double _truckSpeed = 70; // Speed in km/h
+  final double _truckSpeed = 70; // Speed in km/h
   bool _movingToUser = true;
 
   final Location _locationController = Location();
@@ -273,7 +273,7 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Truck Tracker', style: TextStyle(color: Colors.white)),
-        backgroundColor: Color(0xff34D399),
+        backgroundColor: const Color(0xff34D399),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
@@ -321,7 +321,7 @@ class _MapPageState extends State<MapPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CircleAvatar(
+                    const CircleAvatar(
                       radius: 50,
                       backgroundColor: Colors.white,
                       backgroundImage: AssetImage('lib/assets/images/driver.png'),
