@@ -6,6 +6,7 @@ import 'package:location/location.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // For authentication
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -21,7 +22,7 @@ class _MapPageState extends State<MapPage> {
   LatLng? _truckPosition;
 
   Timer? _truckMovementTimer;
-  final double _truckSpeed = 70; // Speed in km/h
+  double _truckSpeed = 70; // Speed in km/h
   bool _movingToUser = true;
 
   final Location _locationController = Location();
@@ -29,6 +30,7 @@ class _MapPageState extends State<MapPage> {
 
   late FirebaseFirestore _firestore;
   late FlutterLocalNotificationsPlugin _localNotifications;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Placeholder driver and arrival info
   final String driverName = "Jivan Rai";
@@ -59,8 +61,11 @@ class _MapPageState extends State<MapPage> {
     try {
       await Firebase.initializeApp();
       _firestore = FirebaseFirestore.instance;
-      await saveTruckStage('Source', _sourceLocation);
-      await saveDriverInfoToFirebase(driverName, driverContact, vehicleNumber, _sourceLocation);
+      final email = _auth.currentUser?.email;
+      if (email != null) {
+        await saveTruckStage('Source', _sourceLocation, email);
+        await saveDriverInfoToFirebase(driverName, driverContact, vehicleNumber, _sourceLocation, email);
+      }
     } catch (e) {
       debugPrint('Error initializing Firebase: $e');
     }
@@ -74,9 +79,11 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> sendNotification(String title, String body) async {
-    // Save notification in Firestore
+    final email = _auth.currentUser?.email;
+    if (email == null) return;
+
     try {
-      await _firestore.collection('notifications').add({
+      await _firestore.collection('notifications').doc(email).collection('user_notifications').add({
         'title': title,
         'body': body,
         'timestamp': FieldValue.serverTimestamp(),
@@ -85,9 +92,9 @@ class _MapPageState extends State<MapPage> {
       debugPrint('Error saving notification: $e');
     }
 
-    // Show local notification
     const androidDetails = AndroidNotificationDetails(
-      'truck_channel', 'Truck Notifications',
+      'truck_channel',
+      'Truck Notifications',
       channelDescription: 'Notifications for truck tracking',
       importance: Importance.high,
       priority: Priority.high,
@@ -96,9 +103,10 @@ class _MapPageState extends State<MapPage> {
     await _localNotifications.show(0, title, body, notificationDetails);
   }
 
-  Future<void> saveDriverInfoToFirebase(String driverName, String contact, String vehicleNumber, LatLng location) async {
+  Future<void> saveDriverInfoToFirebase(
+      String driverName, String contact, String vehicleNumber, LatLng location, String email) async {
     try {
-      await _firestore.collection('drivers').doc('driverInfo').set({
+      await _firestore.collection('users').doc(email).collection('driver_info').doc('info').set({
         'driver_name': driverName,
         'contact': contact,
         'vehicle_number': vehicleNumber,
@@ -113,9 +121,9 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  Future<void> saveTruckStage(String stage, LatLng location) async {
+  Future<void> saveTruckStage(String stage, LatLng location, String email) async {
     try {
-      await _firestore.collection('truck_history').doc(stage).set({
+      await _firestore.collection('users').doc(email).collection('truck_history').doc(stage).set({
         'stage': stage,
         'location': {
           'latitude': location.latitude,
@@ -153,6 +161,8 @@ class _MapPageState extends State<MapPage> {
   void startTruckMovement() {
     _truckMovementTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (_currentPosition == null) return;
+      final email = _auth.currentUser?.email;
+      if (email == null) return;
 
       setState(() {
         if (_movingToUser) {
@@ -168,7 +178,7 @@ class _MapPageState extends State<MapPage> {
           } else {
             _movingToUser = false;
             sendNotification('Truck Arrived', 'The truck has reached your location.');
-            saveTruckStage('User', _truckPosition!);
+            saveTruckStage('User', _truckPosition!, email);
           }
         } else {
           _distanceToDestination = calculateDistance(
@@ -182,14 +192,13 @@ class _MapPageState extends State<MapPage> {
             _truckPosition = moveTowards(_truckPosition!, _destinationLocation, _truckSpeed / 3600);
           } else {
             sendNotification('Truck Arrived', 'The truck has reached the destination.');
-            saveTruckStage('Destination', _destinationLocation);
+            saveTruckStage('Destination', _destinationLocation, email);
             timer.cancel();
           }
         }
 
-        // Save the driver's current location and information to Firebase
         if (_truckPosition != null) {
-          saveDriverInfoToFirebase(driverName, driverContact, vehicleNumber, _truckPosition!);
+          saveDriverInfoToFirebase(driverName, driverContact, vehicleNumber, _truckPosition!, email);
         }
 
         updateArrivalTimes();
@@ -259,11 +268,19 @@ class _MapPageState extends State<MapPage> {
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Truck Tracker')),
+      appBar: AppBar(
+        title: const Text('Truck Tracker', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.green,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Stack(
         children: [
           _truckPosition != null
@@ -298,41 +315,40 @@ class _MapPageState extends State<MapPage> {
             left: 10,
             right: 10,
             child: Card(
-              color: Colors.white,
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              color: Colors.green,
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Driver Information",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.white,
+                      backgroundImage: AssetImage('lib/assets/images/driver.png'),
                     ),
-                    const SizedBox(height: 8),
-                    Text("Name: $driverName"),
-                    Text("Contact: $driverContact"),
-                    Text("Vehicle: $vehicleNumber"),
-                    const SizedBox(height: 12),
-                    const Text(
-                      "Arrival Information",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Driver: $driverName',
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
                     ),
-                    const SizedBox(height: 8),
-                    Text("Distance to User: ${_distanceToUser?.toStringAsFixed(
-                        2)} km"),
-                    Text("Estimated Arrival to User: $_arrivalTimeToUser"),
                     Text(
-                        "Distance to Destination: ${_distanceToDestination
-                            ?.toStringAsFixed(2)} km"),
+                      'Contact: $driverContact',
+                      style: const TextStyle(fontSize: 16, color: Colors.white),
+                    ),
                     Text(
-                        "Estimated Arrival to Destination: $_arrivalTimeToDestination"),
+                      'Vehicle: $vehicleNumber',
+                      style: const TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                    if (_arrivalTimeToUser != null)
+                      Text(
+                        'Arrival to user: $_arrivalTimeToUser',
+                        style: const TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    if (_arrivalTimeToDestination != null)
+                      Text(
+                        'Arrival to destination: $_arrivalTimeToDestination',
+                        style: const TextStyle(fontSize: 16, color: Colors.white),
+                      ),
                   ],
                 ),
               ),
