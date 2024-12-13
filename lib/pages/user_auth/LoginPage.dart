@@ -3,6 +3,7 @@ import 'package:cleanloop/pages/user_auth/auth_service.dart';
 import 'package:flutter/material.dart';
 
 import '../CustomDialog.dart';
+import 'AuthHelper.dart';
 import 'Forgot_Password.dart';
 import '../../homePage.dart';
 
@@ -15,10 +16,13 @@ class Loginpage extends StatefulWidget {
 
 class _LoginpageState extends State<Loginpage> {
   final _auth = AuthService();
+  final AuthHelper _authHelper = AuthHelper();
 
   bool _isPasswordVisible = false;
+
   bool _isGoogleLoading = false;
   bool _isFacebookLoading = false;
+  bool _isLogin = false;
 
   final _email = TextEditingController();
   final _password = TextEditingController();
@@ -192,17 +196,18 @@ class _LoginpageState extends State<Loginpage> {
     return InkWell(
       onTap: _login,
       child: Container(
-        height: screenHeight * 0.068,
+        height: screenHeight * 0.067,
         width: screenWidth * 0.6,
         decoration: BoxDecoration(
           color: Colors.green.shade500,
           borderRadius: BorderRadius.circular(9),
         ),
-        child: const Center(
-          child: Text(
+        child: Center(
+          child:  _isLogin?CircularProgressIndicator(
+          )  :Text(
             "Login",
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 25,
               fontWeight: FontWeight.bold,
               fontFamily: "calistoga",
               letterSpacing: 2,
@@ -254,7 +259,17 @@ class _LoginpageState extends State<Loginpage> {
 
   InkWell _buildGoogleLoginButton(double screenWidth) {
     return InkWell(
-      onTap: _loginWithGoogle,
+      onTap: ()async{
+        setState(() {
+          _isGoogleLoading=true;
+        });
+        await _authHelper.loginWithGoogle(context);
+
+        setState(() {
+          _isGoogleLoading = false;
+        });
+      },
+
       child: _isGoogleLoading
           ? const CircularProgressIndicator()
           : SizedBox(
@@ -267,7 +282,15 @@ class _LoginpageState extends State<Loginpage> {
 
   InkWell _buildFacebookLoginButton(double screenWidth) {
     return InkWell(
-      onTap: _loginWithFacebook,
+      onTap: ()async{
+        setState(() {
+          _isFacebookLoading = true;
+        });
+        await _authHelper.loginWithFacebook(context);
+        setState(() {
+          _isFacebookLoading = false;
+        });
+    },
       child: _isFacebookLoading
           ? const CircularProgressIndicator()
           : SizedBox(
@@ -327,6 +350,10 @@ class _LoginpageState extends State<Loginpage> {
       return;
     }
 
+    setState(() {
+      _isLogin = true;
+    });
+
     try {
       final user = await _auth.loginUserWithEmailAndPassword(
         _email.text.trim(),
@@ -366,91 +393,11 @@ class _LoginpageState extends State<Loginpage> {
         context: context,
         message: "An error occurred: ${e.toString()}",
       );
+    }finally{
+      setState(() {
+        _isLogin = false;
+      });
     }
   }
 
-  _loginWithGoogle() async {
-    setState(() {
-      _isGoogleLoading = true;
-    });
-
-    try {
-      final user = await _auth.loginWithGoogle();
-
-      setState(() {
-        _isGoogleLoading = false;
-      });
-
-      if (user != null) {
-        CustomDialog.showSuccessDialog(
-          context: context,
-          title: "Welcome Back!",
-          message: "You have successfully signed in with Google.",
-          onConfirm: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const WasteCleaningHomePage()),
-            );
-          },
-        );
-      } else {
-        CustomDialog.showSnackBar(
-          context: context,
-          message: "Login failed. Please check your credentials and try again.",
-        );
-      }
-    } catch (e) {
-      CustomDialog.showSnackBar(
-        context: context,
-        message: "An error occurred: ${e.toString()}",
-      );
-    }
-  }
-
-  _loginWithFacebook() async {
-    setState(() {
-      _isFacebookLoading = true;
-    });
-
-    try {
-      final user = await _auth.loginWithFacebook();
-
-      setState(() {
-        _isFacebookLoading = false;
-      });
-
-      if (user != null) {
-        CustomDialog.showSuccessDialog(
-          context: context,
-          title: "Welcome!",
-          message: "You have successfully registered using Facebook.",
-          onConfirm: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const WasteCleaningHomePage()),
-            );
-          },
-        );
-      } else {
-        CustomDialog.showSnackBar(
-          context: context,
-          message: "Registration was not completed. Please try again.",
-        );
-      }
-    } catch (e, stackTrace) {
-      setState(() {
-        _isFacebookLoading = false;
-      });
-
-      print("Error during Facebook registration: $e");
-      print("Stack trace: $stackTrace");
-
-      CustomDialog.showSnackBar(
-        context: context,
-        message: "Facebook registration failed. Please try again later.",
-      );
-    }
-  }
 }

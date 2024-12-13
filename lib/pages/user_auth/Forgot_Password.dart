@@ -1,3 +1,4 @@
+import 'package:cleanloop/pages/user_auth/AuthHelper.dart';
 import 'package:cleanloop/pages/user_auth/LoginPage.dart';
 import 'package:cleanloop/pages/user_auth/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,11 @@ class ForgotPassword extends StatefulWidget {
 class _ForgotPasswordState extends State<ForgotPassword> {
   final _auth = AuthService();
   final _email = TextEditingController();
+
+  final AuthHelper _authHelper = AuthHelper();
+  bool _isGoogleLoading = false;
+  bool _isFacebookLoading = false;
+  bool _isForgotButton = false;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +86,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     message: "Please enter your email address.",
                   );
                 } else {
+                  setState(() {
+                    _isForgotButton = true;
+                  });
                   try {
                     await _auth.sendPasswordResetLink(email);
                     CustomDialog.showSuccessDialog(
@@ -95,6 +104,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       context: context,
                       message: "Failed to send the email. Please try again.",
                     );
+                  }finally{
+                    setState(() {
+                      _isForgotButton = false;
+                    });
                   }
                 }
               },
@@ -105,14 +118,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   color: Colors.green.shade500,
                   borderRadius: BorderRadius.circular(9),
                 ),
-                child: const Center(
-                  child: Text(
+                child:  Center(
+                  child: _isForgotButton? CircularProgressIndicator() :Text(
                     "Send",
                     style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "calistoga",
-                        letterSpacing: 2),
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "calistoga",
+                      letterSpacing: 2,),
                   ),
                 ),
               ),
@@ -147,16 +160,35 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 InkWell(
-                  onTap: () {},
-                  child: SizedBox(
+                  onTap: () async{
+                    setState(() {
+                      _isGoogleLoading = true;
+                    });
+                    await _authHelper.loginWithGoogle(context);
+
+                    setState(() {
+                      _isGoogleLoading = false;
+                    });
+                  },
+                  child: _isGoogleLoading? CircularProgressIndicator()
+                      :SizedBox(
                     height: screenWidth * 0.14,
                     width: screenWidth * 0.14,
                     child: Image.asset("lib/assets/images/google.logo.png"),
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
-                  child: SizedBox(
+                  onTap: ()async {
+                    setState(() {
+                      _isFacebookLoading = true;
+                    });
+                    await _authHelper.loginWithFacebook(context);
+
+                    setState(() {
+                      _isFacebookLoading = false;
+                    });
+                  },
+                  child: _isFacebookLoading? CircularProgressIndicator()  :SizedBox(
                     height: screenWidth * 0.16,
                     width: screenWidth * 0.16,
                     child: Image.asset("lib/assets/images/facebook.logo.png"),

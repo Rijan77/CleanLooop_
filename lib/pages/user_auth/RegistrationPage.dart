@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 
 import '../CustomDialog.dart';
+import 'AuthHelper.dart';
 
 
 class Registrationpage extends StatefulWidget {
@@ -23,6 +24,11 @@ class _RegistrationpageState extends State<Registrationpage> {
   final _password = TextEditingController();
 
   final _auth = AuthService();
+  final AuthHelper _authHelper = AuthHelper();
+
+  bool _isGoogleLoading = false;
+  bool _isFacebookLoading = false;
+  bool _isRegistration = false;
 
 
   Future addUserDetails(String name, int number, String email)async{
@@ -33,8 +39,11 @@ class _RegistrationpageState extends State<Registrationpage> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+
     // Get screen width and height using MediaQuery
     final screenWidth = MediaQuery
         .of(context)
@@ -253,18 +262,20 @@ class _RegistrationpageState extends State<Registrationpage> {
             InkWell(
               onTap: _signup,
               child: Container(
-                height: screenHeight * 0.07,
+                height: screenHeight * 0.067,
                 width: screenWidth * 0.6,
                 decoration: BoxDecoration(
                   color: Colors.green.shade500,
                   borderRadius: BorderRadius.circular(9),
                 ),
-                child: const Center(
-                  child: Text(
+                child:  Center(
+                  child: _isRegistration? CircularProgressIndicator() :Text(
                     "Sign Up",
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
+                      fontFamily: "calistoga",
+                      letterSpacing: 2,
                     ),
                   ),
                 ),
@@ -300,21 +311,41 @@ class _RegistrationpageState extends State<Registrationpage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 InkWell(
-                  onTap: () {},
-                  child: SizedBox(
+                  onTap: ()async {
+                    setState(() {
+                      _isGoogleLoading = true;
+                    });
+                    await _authHelper.loginWithGoogle(context);
+
+                    setState(() {
+                      _isGoogleLoading = false;
+                    });
+                  },
+                  child: _isGoogleLoading ? CircularProgressIndicator()
+                    :SizedBox(
                     height: screenWidth * 0.14,
                     width: screenWidth * 0.14,
                     child: Image.asset("lib/assets/images/google.logo.png"),
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
-                  child: SizedBox(
-                    height: screenWidth * 0.16,
-                    width: screenWidth * 0.16,
-                    child: Image.asset("lib/assets/images/facebook.logo.png"),
+                  onTap: ()async {
+                    setState(() {
+                      _isFacebookLoading = true;
+                    });
+                    await _authHelper.loginWithFacebook(context);
+
+                    setState(() {
+                      _isFacebookLoading = false;
+                    });
+                  },
+                  child:_isFacebookLoading? CircularProgressIndicator()
+                      : SizedBox(
+                      height: screenWidth * 0.16,
+                      width: screenWidth * 0.16,
+                      child: Image.asset("lib/assets/images/facebook.logo.png"),
+                    ),
                   ),
-                ),
               ],
             ),
             SizedBox(height: screenHeight * 0.03),
@@ -366,6 +397,10 @@ class _RegistrationpageState extends State<Registrationpage> {
           context: context, message: "Password must be at least 6 characters.");
       return;
     }
+    setState(() {
+      _isRegistration = true;
+    });
+
 
     try {
       final user = await _auth.createUserWithEmailAndPassword(
@@ -392,6 +427,10 @@ class _RegistrationpageState extends State<Registrationpage> {
       CustomDialog.showSnackBar(
           context: context,
           message: e.toString().replaceFirst('Exception: ', ''));
+    }finally{
+      setState(() {
+        _isRegistration = false;
+      });
     }
     addUserDetails(
       _name.text.trim(),
