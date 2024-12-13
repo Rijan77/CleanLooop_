@@ -397,16 +397,13 @@ class _LoginpageState extends State<Loginpage> {
       } else {
         CustomDialog.showSnackBar(
           context: context,
-          message: "Login was unsuccessful. Please check your credentials and try again.",
+          message: "Login failed. Please check your credentials and try again.",
         );
       }
     } catch (e) {
-      setState(() {
-        _isGoogleLoading = false;
-      });
       CustomDialog.showSnackBar(
         context: context,
-        message: "Google Login failed. Please try again later.",
+        message: "An error occurred: ${e.toString()}",
       );
     }
   }
