@@ -203,8 +203,8 @@ class _LoginpageState extends State<Loginpage> {
           borderRadius: BorderRadius.circular(9),
         ),
         child: Center(
-          child:  _isLogin?CircularProgressIndicator(
-          )  :Text(
+          child:  _isLogin?const CircularProgressIndicator(
+          )  :const Text(
             "Login",
             style: TextStyle(
               fontSize: 25,

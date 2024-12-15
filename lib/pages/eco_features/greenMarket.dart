@@ -1,14 +1,13 @@
+
+
 import 'package:esewa_flutter_sdk/esewa_config.dart';
 import 'package:esewa_flutter_sdk/esewa_flutter_sdk.dart';
 import 'package:esewa_flutter_sdk/esewa_payment.dart';
 import 'package:esewa_flutter_sdk/esewa_payment_success_result.dart';
 import 'package:flutter/material.dart';
 
-
-
 class GreenMarketPage extends StatelessWidget {
   const GreenMarketPage({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -50,17 +49,31 @@ class _EcoFriendlyProductMarketplaceState
   TextEditingController searchController = TextEditingController();
   String searchQuery = '';
 
-  List<String> productImages = [
-    'https://images.unsplash.com/photo-1550317138-10000687a72b?w=500',
-    'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600',
-
-    'https://images.unsplash.com/photo-1562577309-2592ab84b1bc?w=500',
-    'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=500',
-    'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=500',
-
+  // List of products with names and image URLs
+  List<Map<String, String>> products = [
+    {
+      'name': 'Flower Bouquet',
+      'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkLLUtxpbCKtmZi4hWvFNgceCyoc_X0JEbWA&s',
+    },
+    {
+      'name': 'Apple',
+      'image': 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600',
+    },
+    {
+      'name': 'Pot',
+      'image': 'https://www.shutterstock.com/image-photo/clay-flower-pot-soil-isolated-600nw-2374368675.jpg',
+    },
+    {
+      'name': 'Pot Flower',
+      'image': 'https://www.shutterstock.com/image-vector/spring-colorful-flowers-pots-vector-260nw-99149603.jpg',
+    },
+    {
+      'name': 'Tomato',
+      'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4t2GRCI-vxm730F6OC76aQIhTeoEVnGLYOQ&s',
+    },
   ];
 
-  esewapaymentcall(){
+  esewapaymentcall() {
     try {
       EsewaFlutterSdk.initPayment(
         esewaConfig: EsewaConfig(
@@ -71,7 +84,8 @@ class _EcoFriendlyProductMarketplaceState
         esewaPayment: EsewaPayment(
           productId: "1d71jd81",
           productName: "Product One",
-          productPrice: "20", callbackUrl: '',
+          productPrice: "20",
+          callbackUrl: '',
         ),
         onPaymentSuccess: (EsewaPaymentSuccessResult data) {
           debugPrint(":::SUCCESS::: => $data");
@@ -87,7 +101,6 @@ class _EcoFriendlyProductMarketplaceState
     } on Exception catch (e) {
       debugPrint("EXCEPTION : ${e.toString()}");
     }
-
   }
 
   @override
@@ -119,28 +132,33 @@ class _EcoFriendlyProductMarketplaceState
               mainAxisSpacing: 10,
               mainAxisExtent: 250, // Set fixed height for each card
             ),
-            itemCount: productImages.length,
+            itemCount: products.length,
             itemBuilder: (context, index) {
-              String productImage = productImages[index];
-              return productImage.contains(searchQuery) || searchQuery.isEmpty
+              String productImage = products[index]['image']!;
+              String productName = products[index]['name']!;
+              return productName.contains(searchQuery) || searchQuery.isEmpty
                   ? Card(
                 elevation: 5,
                 child: Column(
                   children: [
                     ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                      borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(10)),
                       child: Image.network(
                         productImage,
                         fit: BoxFit.cover,
                         height: 120, // Adjusted image height
                         width: double.infinity,
-                        loadingBuilder: (context, child, loadingProgress) {
+                        loadingBuilder:
+                            (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
                           return Center(
                             child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
+                              value: loadingProgress.expectedTotalBytes !=
+                                  null
                                   ? loadingProgress.cumulativeBytesLoaded /
-                                  (loadingProgress.expectedTotalBytes ?? 1)
+                                  (loadingProgress.expectedTotalBytes ??
+                                      1)
                                   : null,
                             ),
                           );
@@ -152,7 +170,7 @@ class _EcoFriendlyProductMarketplaceState
                       child: Column(
                         children: [
                           Text(
-                            'Product $index',
+                            productName,
                             style: const TextStyle(fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
@@ -184,25 +202,12 @@ class _EcoFriendlyProductMarketplaceState
       builder: (context) {
         return AlertDialog(
           title: const Text('Select Payment Method'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text('eSewa'),
-                leading: const Icon(Icons.payment),
-                onTap: () {
-                  esewapaymentcall();
-                },
-              ),
-              ListTile(
-                title: const Text('Cash on Delivery'),
-                leading: const Icon(Icons.money),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showPaymentSuccessDialog(context, 'Cash on Delivery');
-                },
-              ),
-            ],
+          content: ListTile(
+            title: const Text('eSewa'),
+            leading: const Icon(Icons.payment),
+            onTap: () {
+              esewapaymentcall();
+            },
           ),
         );
       },
@@ -240,8 +245,26 @@ class SustainableAlternatives extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Sustainable Alternatives Page'),
+    return ListView(
+      padding: const EdgeInsets.all(8.0),
+      children: const [
+        ListTile(
+          title: Text('Reusable Water Bottles'),
+          subtitle: Text('Say goodbye to single-use plastic bottles and opt for durable, eco-friendly water bottles.'),
+        ),
+        ListTile(
+          title: Text('Compostable Kitchenware'),
+          subtitle: Text('Compostable plates, cups, and utensils for eco-conscious dining.'),
+        ),
+        ListTile(
+          title: Text('Bamboo Toothbrushes'),
+          subtitle: Text('Sustainable alternatives to plastic toothbrushes made from bamboo.'),
+        ),
+        ListTile(
+          title: Text('Eco-Friendly Clothing'),
+          subtitle: Text('Clothing made from sustainable fabrics like organic cotton, hemp, and recycled materials.'),
+        ),
+      ],
     );
   }
 }
@@ -251,8 +274,26 @@ class LocalVendors extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Local Vendors Page'),
+    return ListView(
+      padding: const EdgeInsets.all(8.0),
+      children: const [
+        ListTile(
+          title: Text('Green Earth Grocers'),
+          subtitle: Text('Local organic grocery store offering fresh produce and eco-friendly products.'),
+        ),
+        ListTile(
+          title: Text('Sustainable Clothing Co.'),
+          subtitle: Text('Locally-made clothing line focused on using sustainable materials.'),
+        ),
+        ListTile(
+          title: Text('The Green Market Farm'),
+          subtitle: Text('Farm offering organic fruits and vegetables, promoting sustainable agriculture.'),
+        ),
+        ListTile(
+          title: Text('Recycled Goods Shop'),
+          subtitle: Text('Store specializing in upcycled and recycled goods from local artisans.'),
+        ),
+      ],
     );
   }
 }

@@ -119,7 +119,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   borderRadius: BorderRadius.circular(9),
                 ),
                 child:  Center(
-                  child: _isForgotButton? CircularProgressIndicator() :Text(
+                  child: _isForgotButton? const CircularProgressIndicator() :const Text(
                     "Send",
                     style: TextStyle(
                       fontSize: 25,
@@ -170,7 +170,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       _isGoogleLoading = false;
                     });
                   },
-                  child: _isGoogleLoading? CircularProgressIndicator()
+                  child: _isGoogleLoading? const CircularProgressIndicator()
                       :SizedBox(
                     height: screenWidth * 0.14,
                     width: screenWidth * 0.14,
@@ -188,7 +188,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       _isFacebookLoading = false;
                     });
                   },
-                  child: _isFacebookLoading? CircularProgressIndicator()  :SizedBox(
+                  child: _isFacebookLoading? const CircularProgressIndicator()  :SizedBox(
                     height: screenWidth * 0.16,
                     width: screenWidth * 0.16,
                     child: Image.asset("lib/assets/images/facebook.logo.png"),

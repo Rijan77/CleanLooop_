@@ -27,7 +27,7 @@ class _WrapperState extends State<Wrapper> {
           if(snapshot.data == null){
             return const Onboardingpage();
           } else{
-            return  const WasteCleaningHomePage();
+            return  const Onboardingpage();
           }
         }
 

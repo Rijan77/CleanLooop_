@@ -16,8 +16,8 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  final LatLng _sourceLocation = const LatLng(27.6557, 85.3491);
-  final LatLng _destinationLocation = const LatLng(27.6663, 85.3330);
+  final LatLng _sourceLocation = const LatLng(27.6862, 85.3149);
+  final LatLng _destinationLocation = const LatLng(27.6782, 85.3169);
   LatLng? _currentPosition;
   LatLng? _truckPosition;
 

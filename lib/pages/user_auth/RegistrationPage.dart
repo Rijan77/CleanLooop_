@@ -269,7 +269,7 @@ class _RegistrationpageState extends State<Registrationpage> {
                   borderRadius: BorderRadius.circular(9),
                 ),
                 child:  Center(
-                  child: _isRegistration? CircularProgressIndicator() :Text(
+                  child: _isRegistration? const CircularProgressIndicator() :const Text(
                     "Sign Up",
                     style: TextStyle(
                       fontSize: 25,
@@ -321,7 +321,7 @@ class _RegistrationpageState extends State<Registrationpage> {
                       _isGoogleLoading = false;
                     });
                   },
-                  child: _isGoogleLoading ? CircularProgressIndicator()
+                  child: _isGoogleLoading ? const CircularProgressIndicator()
                     :SizedBox(
                     height: screenWidth * 0.14,
                     width: screenWidth * 0.14,
@@ -339,7 +339,7 @@ class _RegistrationpageState extends State<Registrationpage> {
                       _isFacebookLoading = false;
                     });
                   },
-                  child:_isFacebookLoading? CircularProgressIndicator()
+                  child:_isFacebookLoading? const CircularProgressIndicator()
                       : SizedBox(
                       height: screenWidth * 0.16,
                       width: screenWidth * 0.16,
