@@ -302,7 +302,7 @@ class _RewardPageState extends State<RewardPage> {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: canClaim ? Colors.black87 : Colors.grey,
                 ),

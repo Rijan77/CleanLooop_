@@ -75,11 +75,11 @@ class _UserprofileState extends State<Userprofile> {
             stream: FirebaseFirestore.instance
                 .collection("users")
                 .where("email", isEqualTo: FirebaseAuth.instance.currentUser?.email)
-                .snapshots(),
+                .snapshots(),  // real-time listener, any changes in the Firestore document will automatically update the displayed name
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.active &&
                   snapshot.hasData &&
-                  snapshot.data!.docs.isNotEmpty) {
+                  snapshot.data!.docs.isNotEmpty) { // Ensures the stream is active and connected.
                 return Text(
                   snapshot.data!.docs[0]["name"],
                   style: const TextStyle(
