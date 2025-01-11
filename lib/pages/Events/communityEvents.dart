@@ -34,7 +34,7 @@ class _CommunityEventsPageState extends State<CommunityEventsPage> {
         Event(
           id: "treePlantationDrive",
           title: "Tree Plantation Drive",
-          date: DateTime(2024, 12, 16),
+          date: DateTime(2025, 1, 10),
           time: "11:00 AM",
           location: "City Square",
           description: "Join us for a community tree planting event!",
@@ -50,7 +50,7 @@ class _CommunityEventsPageState extends State<CommunityEventsPage> {
         Event(
           id: "wasteManagementWorkshop",
           title: "Waste Management Workshop",
-          date: DateTime(2024, 12, 28),
+          date: DateTime(2025, 1, 28),
           time: "2:00 PM",
           location: "Community Center",
           description: "Learn about effective waste management practices.",
@@ -58,7 +58,7 @@ class _CommunityEventsPageState extends State<CommunityEventsPage> {
         Event(
           id: "sustainabilityFair",
           title: "Sustainability Fair",
-          date: DateTime(2025, 1, 5),
+          date: DateTime(2025, 1, 16),
           time: "10:00 AM",
           location: "Town Hall",
           description: "Explore sustainable living solutions.",
