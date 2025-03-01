@@ -15,7 +15,7 @@ class HistoryItem {
 }
 
 class HistoryPage extends StatelessWidget {
-  HistoryPage({Key? key}) : super(key: key);
+  HistoryPage({super.key});
 
   final String? userEmail = FirebaseAuth.instance.currentUser?.email;
 
@@ -42,7 +42,7 @@ class HistoryPage extends StatelessWidget {
         .orderBy('claimedAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
+      final data = doc.data();
       return HistoryItem(
         type: HistoryItemType.reward,
         data: data,

@@ -395,7 +395,7 @@ class HomeScreen extends StatelessWidget {
             Navigator.push(context, MaterialPageRoute(builder: (context)=>const Recyclingguide()));
           }
           if(title == "Rewards & Points"){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>RewardPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const RewardPage()));
           }
 
 

@@ -28,7 +28,7 @@ class _SchedulePickupPageState extends State<SchedulePickupPage> {
           },
         ),
         title: const Text('Schedule Pickup'),
-        backgroundColor: Color(0xff34D399),
+        backgroundColor: const Color(0xff34D399),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

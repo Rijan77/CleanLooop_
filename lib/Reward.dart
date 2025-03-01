@@ -42,7 +42,7 @@ class _RewardPageState extends State<RewardPage> {
         setState(() {
           _points = userDoc.data()?['points'] ?? 0;
           _rewardHistory = historySnapshot.docs
-              .map((doc) => doc.data() as Map<String, dynamic>)
+              .map((doc) => doc.data())
               .toList();
         });
       }
@@ -268,7 +268,7 @@ class _RewardPageState extends State<RewardPage> {
                     ),
                   )
                 else
-                  ..._rewardHistory.map((reward) => _buildHistoryCard(reward)).toList(),
+                  ..._rewardHistory.map((reward) => _buildHistoryCard(reward)),
               ],
             ),
           ),
