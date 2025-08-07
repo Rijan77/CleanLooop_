@@ -1,6 +1,7 @@
-# ♻️ CleanLoop – Smart Waste Management App
+# ♻️ ♻️ CleanLoop – The Smart Waste Management App
 
-CleanLoop is a Flutter-based mobile application designed to make waste management smarter and more eco-friendly. Users can track garbage trucks, schedule pickups, learn about recycling, and take part in green initiatives — all in one user-friendly app.
+CleanLoop is a smart, eco-friendly Flutter application that brings innovation to waste management and recycling efforts. It empowers users to contribute to a cleaner environment through modern features like live waste truck tracking, waste collection scheduling, recycling education, community engagement, and access to sustainable products — all from a single platform with a clean and user-friendly UI.
+
 
 ---
 
@@ -41,6 +42,7 @@ To run the project locally:
 
 ```bash
 git clone https://github.com/Rijan77/CleanLoop_
-cd cleanloop
+cd cleanloop_
 flutter pub get
 flutter run
+
